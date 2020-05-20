@@ -1,4 +1,4 @@
-project(xmr-stak)
+project(xmr-Depricon)
 
 cmake_minimum_required(VERSION 3.4.0)
 
@@ -28,7 +28,7 @@ list(APPEND CMAKE_PREFIX_PATH "$ENV{CMAKE_PREFIX_PATH}")
 ################################################################################
 
 # gcc 5.1 is the first GNU version without CoW strings
-# https://github.com/fireice-uk/xmr-stak-nvidia/pull/10#issuecomment-290821792
+# https://github.com/fireice-uk/xmr-Depricon-nvidia/pull/10#issuecomment-290821792
 # If you remove this guard to compile with older gcc versions the miner will produce
 # a high rate of wrong shares.
 if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
@@ -43,17 +43,17 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "${BUILD_TYPE}")
 
-set(XMR-STAK_COMPILE "native" CACHE STRING "select CPU compute architecture")
-set_property(CACHE XMR-STAK_COMPILE PROPERTY STRINGS "native;generic")
-if(XMR-STAK_COMPILE STREQUAL "native")
+set(XMR-Depricon_COMPILE "native" CACHE STRING "select CPU compute architecture")
+set_property(CACHE XMR-Depricon_COMPILE PROPERTY STRINGS "native;generic")
+if(XMR-Depricon_COMPILE STREQUAL "native")
     if(NOT CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
         set(CMAKE_CXX_FLAGS "-march=native -mtune=native ${CMAKE_CXX_FLAGS}")
         set(CMAKE_C_FLAGS "-march=native -mtune=native ${CMAKE_C_FLAGS}")
     endif()
-elseif(XMR-STAK_COMPILE STREQUAL "generic")
+elseif(XMR-Depricon_COMPILE STREQUAL "generic")
     add_definitions("-DCONF_ENFORCE_OpenCL_1_2=1")
 else()
-    message(FATAL_ERROR "XMR-STAK_COMPILE is set to an unknown value '${XMR-STAK_COMPILE}'")
+    message(FATAL_ERROR "XMR-Depricon_COMPILE is set to an unknown value '${XMR-Depricon_COMPILE}'")
 endif()
 
 # option to add static libgcc and libstdc++
@@ -109,9 +109,9 @@ if(CUDA_ENABLE)
             lib)
 
         list(APPEND BACKEND_TYPES "nvidia")
-        option(XMR-STAK_LARGEGRID "Support large CUDA block count > 128" ON)
-        if(XMR-STAK_LARGEGRID)
-            add_definitions("-DXMR_STAK_LARGEGRID=${XMR-STAK_LARGEGRID}")
+        option(XMR-Depricon_LARGEGRID "Support large CUDA block count > 128" ON)
+        if(XMR-Depricon_LARGEGRID)
+            add_definitions("-DXMR_Depricon_LARGEGRID=${XMR-Depricon_LARGEGRID}")
         endif()
 
         set(DEVICE_COMPILER "nvcc")
@@ -123,10 +123,10 @@ if(CUDA_ENABLE)
 
         set_property(CACHE CUDA_COMPILER PROPERTY STRINGS "${DEVICE_COMPILER}")
 
-        set(XMR-STAK_THREADS 0 CACHE STRING "Set maximum number of threads (for compile time optimization)")
-        if(NOT XMR-STAK_THREADS EQUAL 0)
-            message(STATUS "xmr-stak-nvidia: set max threads per block to ${XMR-STAK_THREADS}")
-            add_definitions("-DXMR_STAK_THREADS=${XMR-STAK_THREADS}")
+        set(XMR-Depricon_THREADS 0 CACHE STRING "Set maximum number of threads (for compile time optimization)")
+        if(NOT XMR-Depricon_THREADS EQUAL 0)
+            message(STATUS "xmr-Depricon-nvidia: set max threads per block to ${XMR-Depricon_THREADS}")
+            add_definitions("-DXMR_Depricon_THREADS=${XMR-Depricon_THREADS}")
         endif()
         set(DEFAULT_CUDA_ARCH "30;35;37;50;52")
         # Fermi GPUs are only supported with CUDA < 9.0
@@ -154,7 +154,7 @@ if(CUDA_ENABLE)
 
         # generate comma separated list with architectures
         string(REPLACE ";" "+" STR_CUDA_ARCH "${CUDA_ARCH}")
-        add_definitions("-DXMRSTAK_CUDA_ARCH_LIST=${STR_CUDA_ARCH}")
+        add_definitions("-DXMDepricon_CUDA_ARCH_LIST=${STR_CUDA_ARCH}")
 
         # validate architectures (only numbers are allowed)
         foreach(CUDA_ARCH_ELEM ${CUDA_ARCH})
@@ -234,7 +234,7 @@ if(CUDA_ENABLE)
             endif(CUDA_KEEP_FILES)
 
             if(CUDA_VERSION VERSION_LESS 8.0)
-                # for CUDA 7.5 fix compile error: https://github.com/fireice-uk/xmr-stak/issues/34
+                # for CUDA 7.5 fix compile error: https://github.com/fireice-uk/xmr-Depricon/issues/34
                 set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS}" "-D_MWAITXINTRIN_H_INCLUDED")
             endif()
 
@@ -324,7 +324,7 @@ endif()
 ################################################################################
 
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    set_source_files_properties(xmrstak/backend/cpu/crypto/cn_gpu_avx.cpp PROPERTIES COMPILE_FLAGS "-mavx2")
+    set_source_files_properties(xmrDepricon/backend/cpu/crypto/cn_gpu_avx.cpp PROPERTIES COMPILE_FLAGS "-mavx2")
 endif()
 
 ################################################################################
@@ -509,115 +509,115 @@ endif()
 if(CMAKE_C_COMPILER_ID MATCHES "MSVC")
     # asm optimized monero v8 code
     enable_language(ASM_MASM)
-    set_property(SOURCE "xmrstak/backend/cpu/crypto/asm/cryptonight_v8_main_loop.asm" PROPERTY ASM_MASM)
-    set_property(SOURCE "xmrstak/backend/cpu/crypto/asm/cnR/CryptonightR_template.asm" PROPERTY ASM_MASM)
-    add_library(xmr-stak-asm
+    set_property(SOURCE "xmrDepricon/backend/cpu/crypto/asm/cryptonight_v8_main_loop.asm" PROPERTY ASM_MASM)
+    set_property(SOURCE "xmrDepricon/backend/cpu/crypto/asm/cnR/CryptonightR_template.asm" PROPERTY ASM_MASM)
+    add_library(xmr-Depricon-asm
         STATIC
-        "xmrstak/backend/cpu/crypto/asm/cryptonight_v8_main_loop.asm"
-        "xmrstak/backend/cpu/crypto/asm/cnR/CryptonightR_template.asm"
+        "xmrDepricon/backend/cpu/crypto/asm/cryptonight_v8_main_loop.asm"
+        "xmrDepricon/backend/cpu/crypto/asm/cnR/CryptonightR_template.asm"
     )
 else()
     # asm optimized monero v8 code
     enable_language(ASM)
-    set_property(SOURCE "xmrstak/backend/cpu/crypto/asm/cryptonight_v8_main_loop.S" PROPERTY CPP)
-    set_property(SOURCE "xmrstak/backend/cpu/crypto/asm/cnR/CryptonightR_template.S" PROPERTY CPP)
-    set_source_files_properties("xmrstak/backend/cpu/crypto/asm/cryptonight_v8_main_loop.S" PROPERTIES COMPILE_FLAGS "-x assembler-with-cpp")
-    set_source_files_properties("xmrstak/backend/cpu/crypto/asm/cnR/CryptonightR_template.S" PROPERTIES COMPILE_FLAGS "-x assembler-with-cpp")
-    add_library(xmr-stak-asm
+    set_property(SOURCE "xmrDepricon/backend/cpu/crypto/asm/cryptonight_v8_main_loop.S" PROPERTY CPP)
+    set_property(SOURCE "xmrDepricon/backend/cpu/crypto/asm/cnR/CryptonightR_template.S" PROPERTY CPP)
+    set_source_files_properties("xmrDepricon/backend/cpu/crypto/asm/cryptonight_v8_main_loop.S" PROPERTIES COMPILE_FLAGS "-x assembler-with-cpp")
+    set_source_files_properties("xmrDepricon/backend/cpu/crypto/asm/cnR/CryptonightR_template.S" PROPERTIES COMPILE_FLAGS "-x assembler-with-cpp")
+    add_library(xmr-Depricon-asm
         STATIC
-        "xmrstak/backend/cpu/crypto/asm/cryptonight_v8_main_loop.S"
-        "xmrstak/backend/cpu/crypto/asm/cnR/CryptonightR_template.S"
+        "xmrDepricon/backend/cpu/crypto/asm/cryptonight_v8_main_loop.S"
+        "xmrDepricon/backend/cpu/crypto/asm/cnR/CryptonightR_template.S"
     )
 endif()
 
-set_property(TARGET xmr-stak-asm PROPERTY LINKER_LANGUAGE C)
+set_property(TARGET xmr-Depricon-asm PROPERTY LINKER_LANGUAGE C)
 
 # compile C files
-file(GLOB SRCFILES_C "xmrstak/backend/cpu/crypto/*.c")
+file(GLOB SRCFILES_C "xmrDepricon/backend/cpu/crypto/*.c")
 
-add_library(xmr-stak-c
+add_library(xmr-Depricon-c
     STATIC
     ${SRCFILES_C}
 )
-set_property(TARGET xmr-stak-c PROPERTY C_STANDARD 99)
+set_property(TARGET xmr-Depricon-c PROPERTY C_STANDARD 99)
 if(MICROHTTPD_ENABLE)
-    target_link_libraries(xmr-stak-c ${MHTD})
+    target_link_libraries(xmr-Depricon-c ${MHTD})
 endif()
-target_link_libraries(xmr-stak-c ${LIBS} xmr-stak-asm)
+target_link_libraries(xmr-Depricon-c ${LIBS} xmr-Depricon-asm)
 
 # compile generic backend files
 file(GLOB BACKEND_CPP
-    "xmrstak/*.cpp"
-    "xmrstak/backend/cpu/*.cpp"
-    "xmrstak/backend/*.cpp"
-    "xmrstak/backend/cpu/crypto/*.cpp"
-    "xmrstak/http/*.cpp"
-    "xmrstak/misc/*.cpp"
-    "xmrstak/net/*.cpp")
+    "xmrDepricon/*.cpp"
+    "xmrDepricon/backend/cpu/*.cpp"
+    "xmrDepriconbackend/*.cpp"
+    "xmrDepricon/backend/cpu/crypto/*.cpp"
+    "xmrDepricon/http/*.cpp"
+    "xmrDepricon/misc/*.cpp"
+    "xmrDepricon/net/*.cpp")
 
-add_library(xmr-stak-backend
+add_library(xmr-Depricon-backend
     STATIC
     ${BACKEND_CPP}
 )
-target_link_libraries(xmr-stak-backend xmr-stak-c ${CMAKE_DL_LIBS} xmr-stak-asm)
+target_link_libraries(xmr-Depricon-backend xmr-Depricon-c ${CMAKE_DL_LIBS} xmr-Depricon-asm)
 
 # compile CUDA backend
 if(CUDA_FOUND)
     file(GLOB CUDASRCFILES
-        "xmrstak/backend/nvidia/nvcc_code/*.cu"
-        "xmrstak/backend/nvidia/*.cpp")
+        "xmrDepricon/backend/nvidia/nvcc_code/*.cu"
+        "xmrDepricon/backend/nvidia/*.cpp")
 
     if(CUDA_COMPILER STREQUAL "clang")
         # build device code with clang
         add_library(
-            xmrstak_cuda_backend
+            xmrDepricon_cuda_backend
             SHARED
             ${CUDASRCFILES}
         )
-        set_target_properties(xmrstak_cuda_backend PROPERTIES COMPILE_FLAGS ${CLANG_BUILD_FLAGS})
-        set_target_properties(xmrstak_cuda_backend PROPERTIES LINKER_LANGUAGE CXX)
+        set_target_properties(xmrDepricon_cuda_backend PROPERTIES COMPILE_FLAGS ${CLANG_BUILD_FLAGS})
+        set_target_properties(xmrDepricon_cuda_backend PROPERTIES LINKER_LANGUAGE CXX)
         set_source_files_properties(${CUDASRCFILES} PROPERTIES LANGUAGE CXX)
     else()
         #  build device code with nvcc
         cuda_add_library(
-            xmrstak_cuda_backend
+            xmrDepricon_cuda_backend
             SHARED
             ${CUDASRCFILES}
         )
     endif()
 
     set(CUDA_LIBRARIES ${CUDA_LIB} ${CUDA_NVRTC_LIB} ${CUDA_LIBRARIES})
-    target_link_libraries(xmrstak_cuda_backend ${CUDA_LIBRARIES})
-    target_link_libraries(xmrstak_cuda_backend xmr-stak-backend xmr-stak-asm)
+    target_link_libraries(xmDepricon_cuda_backend ${CUDA_LIBRARIES})
+    target_link_libraries(xmrDepricon_cuda_backend xmr-Depricon-backend xmr-Depricon-asm)
 endif()
 
 # compile AMD backend
 if(OpenCL_FOUND)
     file(GLOB OPENCLSRCFILES
-        "xmrstak/backend/amd/amd_gpu/*.cpp"
-        "xmrstak/backend/amd/*.cpp")
-    add_library(xmrstak_opencl_backend
+        "xmDepricon/backend/amd/amd_gpu/*.cpp"
+        "xmDepricon/backend/amd/*.cpp")
+    add_library(xmrDepricon_opencl_backend
         SHARED
         ${OPENCLSRCFILES}
     )
-    target_link_libraries(xmrstak_opencl_backend ${OpenCL_LIBRARY} )
-    target_link_libraries(xmrstak_opencl_backend xmr-stak-backend xmr-stak-asm)
+    target_link_libraries(xmrDepricon_opencl_backend ${OpenCL_LIBRARY} )
+    target_link_libraries(xmrDepricon_opencl_backend xmr-Depricon-backend xmr-Depricon-asm)
 endif()
 
 # compile final binary
-file(GLOB SRCFILES_CPP "xmrstak/cli/*.cpp")
+file(GLOB SRCFILES_CPP "xmrDepricon/cli/*.cpp")
 set_source_files_properties(${SRCFILES_CPP} PROPERTIES LANGUAGE CXX)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    add_executable(xmr-stak ${SRCFILES_CPP} xmrstak/cli/xmr-stak.manifest)
+    add_executable(xmr-Depricon ${SRCFILES_CPP} xmrDepricon/cli/xmr-Depricon.manifest)
 else()
-    add_executable(xmr-stak ${SRCFILES_CPP})
+    add_executable(xmr-Depricon ${SRCFILES_CPP})
 endif()
 
 set(EXECUTABLE_OUTPUT_PATH "bin" CACHE STRING "Path to place executables relative to ${CMAKE_INSTALL_PREFIX}")
 set(LIBRARY_OUTPUT_PATH "bin" CACHE STRING "Path to place libraries relative to ${CMAKE_INSTALL_PREFIX}")
 
-target_link_libraries(xmr-stak ${LIBS} xmr-stak-c xmr-stak-backend xmr-stak-asm)
+target_link_libraries(xmr-Depricon ${LIBS} xmr-Depricon-c xmr-Depricon-backend xmr-Depricon-asm)
 
 ################################################################################
 # Install
@@ -625,27 +625,27 @@ target_link_libraries(xmr-stak ${LIBS} xmr-stak-c xmr-stak-backend xmr-stak-asm)
 
 # do not install the binary if the project and install are equal
 if( NOT CMAKE_INSTALL_PREFIX STREQUAL PROJECT_BINARY_DIR )
-    install(TARGETS xmr-stak
+    install(TARGETS xmr-Depricon
             RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}/${EXECUTABLE_OUTPUT_PATH}")
     if(CUDA_FOUND)
         if(WIN32)
-            install(TARGETS xmrstak_cuda_backend
+            install(TARGETS xmrDepricon_cuda_backend
                 RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}/${LIBRARY_OUTPUT_PATH}")
         else()
-            install(TARGETS xmrstak_cuda_backend
+            install(TARGETS xmDepricon_cuda_backend
                 LIBRARY DESTINATION "${CMAKE_INSTALL_PREFIX}/${LIBRARY_OUTPUT_PATH}")
         endif()
     endif()
     if(OpenCL_FOUND)
         if(WIN32)
-            install(TARGETS xmrstak_opencl_backend
+            install(TARGETS xmrDepricon_opencl_backend
                 RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}/${LIBRARY_OUTPUT_PATH}")
         else()
-            install(TARGETS xmrstak_opencl_backend
+            install(TARGETS xmDepricon_opencl_backend
                 LIBRARY DESTINATION "${CMAKE_INSTALL_PREFIX}/${LIBRARY_OUTPUT_PATH}")
         endif()
     endif()
 else()
     # this rule is used if the install prefix is the build directory
-    install(CODE "MESSAGE(\"xmr-stak installed to folder 'bin'\")")
+    install(CODE "MESSAGE(\"xmr-Depricon installed to folder 'bin'\")")
 endif()
