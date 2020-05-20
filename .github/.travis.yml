@@ -38,7 +38,7 @@ matrix:
       env:
         - CMAKE_CXX_COMPILER=g++-5
         - CMAKE_C_COMPILER=gcc-5
-        - XMRSTAK_CMAKE_FLAGS="-DCUDA_ARCH=30 -DOpenCL_ENABLE=OFF"
+        - XMRDepricon_CMAKE_FLAGS="-DCUDA_ARCH=30 -DOpenCL_ENABLE=OFF"
 
     - os: linux
       compiler: gcc
@@ -53,7 +53,7 @@ matrix:
       env:
         - CMAKE_CXX_COMPILER=g++-6
         - CMAKE_C_COMPILER=gcc-6
-        - XMRSTAK_CMAKE_FLAGS="-DCUDA_ENABLE=OFF -DOpenCL_ENABLE=OFF"
+        - XMRDepricon_CMAKE_FLAGS="-DCUDA_ENABLE=OFF -DOpenCL_ENABLE=OFF"
 
     # test with disabled HWLOC, MICROHTTPD, OpenSSL and no accelerators
     - os: linux
@@ -69,7 +69,7 @@ matrix:
       env:
         - CMAKE_CXX_COMPILER=g++-6
         - CMAKE_C_COMPILER=gcc-6
-        - XMRSTAK_CMAKE_FLAGS="-DCUDA_ENABLE=OFF -DOpenCL_ENABLE=OFF -DHWLOC_ENABLE=OFF -DOpenSSL_ENABLE=OFF -DMICROHTTPD_ENABLE=OFF"
+        - XMRDepricon_CMAKE_FLAGS="-DCUDA_ENABLE=OFF -DOpenCL_ENABLE=OFF -DHWLOC_ENABLE=OFF -DOpenSSL_ENABLE=OFF -DMICROHTTPD_ENABLE=OFF"
 
     - os: linux
       compiler: gcc
@@ -84,12 +84,12 @@ matrix:
       env:
         - CMAKE_CXX_COMPILER=g++-7
         - CMAKE_C_COMPILER=gcc-7
-        - XMRSTAK_CMAKE_FLAGS="-DCUDA_ENABLE=OFF -DOpenCL_ENABLE=OFF"
+        - XMRDepricon_CMAKE_FLAGS="-DCUDA_ENABLE=OFF -DOpenCL_ENABLE=OFF"
 
     - os: osx
       compiler: gcc
       env:
-        - XMRSTAK_CMAKE_FLAGS="-DCUDA_ENABLE=OFF -DOpenCL_ENABLE=OFF"
+        - XMRDepricon_CMAKE_FLAGS="-DCUDA_ENABLE=OFF -DOpenCL_ENABLE=OFF"
 
 before_install:
   - . CI/checkPRBranch
@@ -118,9 +118,9 @@ install:
 script:
   - if [ $TRAVIS_OS_NAME = osx ]; then
       brew install hwloc;
-      cmake -DMICROHTTPD_ENABLE=OFF -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl ${XMRSTAK_CMAKE_FLAGS} .;
+      cmake -DMICROHTTPD_ENABLE=OFF -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl ${XMRDepricon_CMAKE_FLAGS} .;
     else
-      cmake -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER} -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER} ${XMRSTAK_CMAKE_FLAGS} .;
+      cmake -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER} -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER} ${XMRDepricon_CMAKE_FLAGS} .;
     fi;
   - make VERBOSE=1 install
-  - ./bin/xmr-stak --help
+  - ./bin/xmr-Depricon --help
