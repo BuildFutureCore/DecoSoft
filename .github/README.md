@@ -40,7 +40,7 @@ Besides [Monero](https://getmonero.org), following coins can be mined using this
 - [Masari](https://getmasari.org)
 - [Plenteum](https://www.plenteum.com/)
 - [QRL](https://theqrl.org)
-- **[Ryo](https://ryo-currency.com) - Upcoming xmr-stak-gui is sponsored by Ryo**
+- **[Ryo](https://ryo-currency.com) - Upcoming xmr-Depricon-gui is sponsored by Ryo**
 - [Stellite](https://stellite.cash/)
 - [TurtleCoin](https://turtlecoin.lol)
 - [Zelerius](https://zelerius.org/)
